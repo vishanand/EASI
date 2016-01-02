@@ -1,0 +1,73 @@
+<style>
+p{
+	line-height: 150%;
+}
+</style>
+
+<h2>EASI Programming Language Help File</h2>
+The EASI Programming language was designed from the start to introduce programming to new audiences. Its English derived syntax allows beginners to focus on logic rather than learning mundane syntax. The following reference details the specifics of the EASI Programming Language.
+<h2>Commands:</h2>
+<h3><code>ASK</code></h3>
+<p>The ask command asks the user a question through a Popup box, then stores the answer inside a variable that is specified<br/>
+Syntax: <code> ASK <i>"Write Question Here?"</i> STORE TO <i>exampleVariable</i></code></br></p>
+
+<h3><code>COMMENT</code> or <code>NOTE</code></h3>
+<p>The NOTE command allows for annotating of a program's source code, anything that follows the NOTE command is ignored by the EASI Programming Language.<br/>
+Syntax: <code> NOTE <i>insert annotation here!</i></code></br>
+other Syntax: <code> COMMENT <i>insert annotation here!</i></code></p>
+
+<h3><code>CLEAR</code></h3>
+<p>The CLEAR command clears either the Console or Graphical Output screens.<br/>
+Syntax (Console): <code> CLEAR</code></br>Syntax (Graphical): <code> CLEAR GRAPH</code></p>
+
+<h3><code>CREATE</code> or <code>DECLARE</code></h3>
+<p>The CREATE command creates a variable that can then be used afterwards in the program, the variable can optionally be set to a default value as well.<br/>
+Syntax: <code> CREATE <i>variable_name</i></code></br>
+Syntax (set value): <code> CREATE <i>variable_name</i> SET TO <i>initial_value</i></code></p>
+
+<h3><code>DISPLAY or PRINT or SAY</code></h3>
+<p>The SAY command allows the program to display text on the Console Output Screen, the background and foreground colors can be specified.<br/>
+Syntax (Default Colors): <code> SAY <i>"message"</i></code><br/>
+Syntax (Change Foreground Color): <code> SAY <i>"message"</i> in <i>foreground_color</i></code><br/>
+Syntax (Change Background and Foreground Colors): <code> SAY <i>"message"</i> in <i>foreground_color</i> on <i>background_color</i></code><br/>
+
+<h3><code>DRAW</code></h3>
+<p>The DRAW command allows a program to draw a shape onto the Graphical Output Screen<br/>
+Syntax (Rectangle): <code> DRAW rectangle at (<i>x_coordinate</i>, <i>y_coordinate</i>) <i>width</i> by <i>height</i></code><br/>
+Syntax (Circle): <code> DRAW circle at (<i>x_coordinate</i>, <i>y_coordinate</i>) radius <i>radius_of_circle</i></code></p>
+
+<h3><code>END</code></h3>
+<p>The END command ends either a loop or a an if/if-else statement.<br/>
+Syntax (Loop): <code> END LOOP</code><br/>
+Syntax (Game Loop): <code> END GAME LOOP</code><br/>
+Syntax (If): <code> END IF</code><br/></p>
+
+<h3><code>GAME LOOP</code></h3>
+<p>The GAME LOOP command allows the program to loop forever and maintain a high framerate when looping to allow for a game or animation to be written inside of the loop.<br/>
+Syntax (Start): <code> GAME LOOP</code><br/>
+Syntax (END): <code> END GAME LOOP</code><br/></p>
+
+<h3><code>IF/ELSE IF/ELSE</code></h3>
+<p>The IF, ELSE IF, and ELSE statements allow for a condition to be checked.<br/>
+Syntax (IF): <code> IF <i>condition</i></code><br/>
+Syntax (ELSE IF): <code> ELSE IF <i>condition</i></code><br/>
+Syntax (ELSE): <code> ELSE</code><br/>
+Example: <br/><code> IF X > 5 <br/> &nbsp;&nbsp;SAY "X is greater than 5" <br/> ELSE IF X = 5 <br/> &nbsp;&nbsp;SAY "X is equal to 5 <br/> ELSE <br/> &nbsp;&nbsp;SAY "X is less than 5 <br/> END IF</code></p>
+
+<h3><code>LOOP or REPEAT</code></h3>
+<p>The LOOP command allows a program to repeat a block of code a number of times, until a condition is true, or while a condition is true.<br/>
+Syntax (Number of times): <code> LOOP <i>number_of_times</i> COUNTER <i>variable_that_stores_loop_count</i></code><br/>
+Syntax (While condition is true): <code> LOOP WHILE <i>condition</i></code><br/>
+Syntax (Until condition is true): <code> LOOP UNTIL <i>condition</i></code><br/></p>
+
+<h3><code>SET</code></h3>
+<p>The SET command allows the program to set the value of a variable to a number or another variable or a mathematical expression containing variables and numbers.<br/>
+Syntax: <code> SET <i>variable_name</i> TO <i>new_value</i></code><br/></p>
+
+<h2>Reserved Variables</h2>
+
+<h3><code>key_pressed</code></h3>
+<p>The key_pressed variable stores the value of the current keyboard key being pressed, it is especially useful when programming Video Games.</p>
+
+
+

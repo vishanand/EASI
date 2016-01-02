@@ -1,0 +1,389 @@
+<html><head><title>EASI Programming Language</title>
+<script language="javascript" type="text/javascript" src="editarea/edit_area/edit_area_full.js"></script>
+<script language="javascript" type="text/javascript">
+editAreaLoader.init({
+	id : "easySource"		// textarea id
+	,syntax: "easy"			// syntax to be uses for highlighting
+	,start_highlight: true		// to display with highlight mode on start-up
+	,replace_tab_by_spaces: 2
+});
+</script>
+</head><body>
+<h1>EASI Programming Language</h1>
+<p>Tabs: <button onclick='switchTab("codeEditor")'>Code Editor</button>
+<button onclick='switchTab("easyOutput")'>Console Output</button>
+<button onclick='switchTab("myCanvas")'>Graphical Output</button>
+<button onclick='switchTab("helpViewer")'>View Help</button></p>
+<p>Toolbar: <button onclick="run();">Run!</button></p>
+<p id="codeEditor"><textarea name="content" id="easySource" rows=30 cols=100>NOTE Pong Clone in EASI (Vishwesh Anand 2014)
+NOTE WASD controls the paddle, be sure to focus keyboard input on Graphical Output Screen
+
+NOTE py is vertical position of player,  oy is vertical position of AI opponent
+NOTE ax is horizontal position of ball, ay is vertical position of ball
+NOTE ax is horizontal velocity of ball, ay is vertical velocity of ball
+create py set to 200
+create oy set to 220
+create xb set to 360
+create yb set to 240
+create ax set to -4
+create ay set to 0
+game loop
+  clear graph
+  if (key_pressed="w")
+    set py to py + 10
+  else if (key_pressed="s")
+    set py to py - 10
+  end if
+  if py > 460
+    set py to 480 - py
+  else if py < -20
+    set py to 480 + py
+  end if
+  set ax to ax * 1.001
+  set ay to ay * 1.001
+  if xb < 40 or xb > 680 or yb > 470 or yb < 10
+    if (yb > py-10 and yb <= py+30 and xb < 40) or (yb > oy-10 and yb <= oy+30 and xb > 680)
+      set ax to ax * -1
+      set ay to (ay+4) * -1
+    else if (yb >= py+30 and yb < py+90 and xb < 40) or (yb >= oy+30 and yb < oy+90 and xb>680)
+      set ax to ax * -1
+      set ay to (ay-4) * -1
+    else if xb > 700 or xb < 10
+      set xb to 360
+      set yb to 240
+      if ax > 0
+        set ax to 4
+      else 
+        set ax to -4
+      end if
+      set ay to 0
+    else if (yb > 470 or yb < 10) and (xb > 40 or xb < 470)
+      set ay to ay * -1
+      set ax to ax / 1.001
+      set ay to ay / 1.001
+    else 
+      set ax to ax / 1.001
+      set ay to ay / 1.001
+    end if
+  end if
+  set oy to yb - 40
+  set xb to xb + ax
+  set yb to yb + ay
+  draw rectangle at (5, py) 20 by 80 color green
+  draw circle at (xb, yb) radius 10 color blue
+  draw rectangle at (695, oy) 20 by 80 color red
+end game loop</textarea></p>
+<div id="easyOutput" style="display: font-family: monospace; padding: 4px; overflow: auto; height: 70%; width: 70%; background-color: black; color: white" ></div>
+<canvas id="myCanvas" width=720 height=480 style="height: 70%; width: auto;" onkeypress="update(event)" onkeyup="update(event)" tabindex='1'></canvas><br/>
+<iframe id="helpViewer" src="commands.html" style="height: 70%; width: 70%"></iframe>
+
+<script>
+//canvas initialization
+easyCanvas = document.getElementById("myCanvas")
+easyCtx = easyCanvas.getContext("2d")
+easyCtx.fillStyle = "black"		
+easyCtx.fillRect(0,0,720,480)
+//keycode initialization
+key_pressed="";
+/*dpad_up = false
+dpad_down = false
+dpad_right = false
+dpad_left = false
+quit_game = false;*/
+switchTab("codeEditor")
+		
+function run(){
+	var easySourceCode = editAreaLoader.getValue("easySource")
+	var easyCodeLines = easySourceCode.split("\n")
+	var easyJSCode = "";
+	easyCtx.fillStyle = "black"		
+	easyCtx.fillRect(0,0,720,480)
+	for (easyI = 0; easyI < easyCodeLines.length; easyI++){ //hacked together translator
+		var easyCodeStatements = easyCodeLines[easyI].trim().split(" ")
+		var easyCodeStatement = easyCodeStatements[0].toLowerCase()
+		switch (easyCodeStatement){
+			case "say":
+			case "print":
+			case "display": //displays console output
+				var easyX = 0
+				if (easyCodeStatements[easyCodeStatements.length-2].toLowerCase()=="on" && easyCodeStatements[easyCodeStatements.length-4].toLowerCase()=="in"){ easyX = 4 }
+				if (easyCodeStatements[easyCodeStatements.length-2].toLowerCase()=="in"){ easyX = 2 }
+				easyJSLine = "display("
+				for (easyJ = 1; easyJ < easyCodeStatements.length-easyX; easyJ++){
+					easyJSLine += easyCodeStatements[easyJ] + " "
+				}
+				if (easyX ==4){
+					easyJSLine += ", \"" + easyCodeStatements[easyCodeStatements.length-3] + "\""
+					easyJSLine += ", \"" + easyCodeStatements[easyCodeStatements.length-1] + "\""
+				}
+				if (easyX ==2){
+					easyJSLine += ", \"" + easyCodeStatements[easyCodeStatements.length-1] + "\""
+				}
+				easyJSCode += easyJSLine + ")"
+				break;
+			case "clear": //clears console screen or graph
+				if (easyCodeStatements.length==2){
+					easyJSCode += "drawRect(0, 0, 720, 480, \"black\")"
+				}
+				else {
+					easyJSCode += "clear()";
+				}
+				break;
+			case "comment":
+			case "note": //comments, ignores whole line
+				break;
+			case "set": //sets a variable to a value
+				if (easyCodeStatements[2].toLowerCase()=="to"){
+					var easySetOperation = ""
+					for (easyJ = 3; easyJ<easyCodeStatements.length; easyJ++){
+						easySetOperation += easyCodeStatements[easyJ]
+					}
+					easyJSCode += easyCodeStatements[1] + " = " + easySetOperation
+				}
+				else{
+					//TODO: add error code here
+				}
+				break; 
+			case "ask": //asks user for input
+				if (easyCodeStatements[easyCodeStatements.length-3].toLowerCase()=="store" && easyCodeStatements[easyCodeStatements.length-2].toLowerCase()=="to"){
+					var easyJSLine = easyCodeLines[easyI].replace(/ask /i, "ask(")
+					easyJSLine = easyJSLine.replace(/ store to /i, ", \"")
+					easyJSLine += "\")"					
+					easyJSCode += easyJSLine;					
+				}
+				else{
+					//TODO: add error code here
+				}
+				break;
+			case "repeat":
+			case "loop": //performs a while or for loop
+				var easyJSLine = ""
+				if (easyCodeStatements[2].toLowerCase()=="times" && easyCodeStatements[3].toLowerCase()=="counter"){
+					easyJSLine = "for (" + easyCodeStatements[4] + " = 1; " + easyCodeStatements[4] + " <= " + easyCodeStatements[1] + "; " + easyCodeStatements[4] + "++) {"
+				}
+				else if (easyCodeStatements[1].toLowerCase()=="while" || easyCodeStatements[1].toLowerCase()=="until"){
+					if (easyCodeStatements[1].toLowerCase()=="until"){
+						easyJSLine = "while(!("
+					}
+					else{
+						easyJSLine = "while("
+					}
+					var easyIgnore = false;
+					for (easyJ = 2; easyJ<easyCodeStatements.length; easyJ++){
+						if (easyCodeStatements[easyJ].charAt(0)=='\"'){
+							easyIgnore = true;
+						}
+						if (!easyIgnore){
+							var easyJSLine2 = easyCodeStatements[easyJ]
+							easyJSLine2 = easyJSLine2.replace(/<>/g, "!=")
+							easyJSLine2 = easyJSLine2.replace(/=/g, "==")
+							easyJSLine2 = easyJSLine2.replace(/>==/g, ">=")
+							easyJSLine2 = easyJSLine2.replace(/<==/g, "<=")
+							easyJSLine2 = easyJSLine2.replace(/==>/g, "=>")
+							easyJSLine2 = easyJSLine2.replace(/==</g, "=<")
+							if (easyJSLine2.toLowerCase() == "and")
+								easyJSLine2 = "&&"
+							if (easyJSLine2.toLowerCase() == "or")
+								easyJSLine2 = "||"
+							easyJSLine += easyJSLine2 + " "
+						}
+						else {
+							easyJSLine += easyCodeStatements[easyJ] + " "
+						}
+						if (easyCodeStatements[easyJ].slice(-1)=='\"' && easyCodeStatements[easyJ].slice(-2)!='\\"'){
+							easyIgnore = false;
+						}
+					}
+					if (easyCodeStatements[1].toLowerCase()=="until"){
+						easyJSLine += ")){"
+					}
+					else{
+						easyJSLine += "){"
+					}
+				}
+				else{
+					//TODO: add error code here
+				}
+				easyJSCode += easyJSLine
+				break;
+			case "game": //game loop
+				easyJSCode += "function gameLoop() {"
+				break;
+			case "end": //ends loop or if statement
+				if (easyCodeStatements[1].toLowerCase()=="loop" || easyCodeStatements[1].toLowerCase()=="if"){
+					easyJSCode+= "}"
+				}
+				else if (easyCodeStatements[1].toLowerCase()=="game" && easyCodeStatements[2].toLowerCase()=="loop"){
+					//easyJSCode += "if (!quit_game){requestAnimationFrame(gameLoop)} \n } \n requestAnimationFrame(gameLoop)"
+					easyJSCode += "if (1==1){requestAnimationFrame(gameLoop)} \n } \n requestAnimationFrame(gameLoop)"
+				}
+				else{
+					//TODO: add error code here
+				}
+				break;
+			case "else": //else and else if statements
+				if (easyCodeStatements.length == 1){
+					easyJSCode += "} else {"
+					break;
+				}		
+			case "if": //if and else if statements
+				if (easyCodeStatements[1].toLowerCase() == "if"){
+					var easyJSLine = "} else if ("
+					var easyOffset = 1
+				}
+				else {
+					var easyJSLine = "if ("
+					var easyOffset = 0
+				}
+				var easyIgnore = false;
+				for (easyJ = 1 + easyOffset; easyJ<easyCodeStatements.length; easyJ++){
+					if (easyCodeStatements[easyJ].charAt(0)=='\"'){
+						easyIgnore = true;
+					}
+					if (!easyIgnore){
+						var easyJSLine2 = easyCodeStatements[easyJ]
+						easyJSLine2 = easyJSLine2.replace(/<>/g, "!=")
+						easyJSLine2 = easyJSLine2.replace(/=/g, "==")
+						easyJSLine2 = easyJSLine2.replace(/>==/g, ">=")
+						easyJSLine2 = easyJSLine2.replace(/<==/g, "<=")
+						easyJSLine2 = easyJSLine2.replace(/==>/g, "=>")
+						easyJSLine2 = easyJSLine2.replace(/==</g, "=<")
+						if (easyJSLine2.toLowerCase() == "and")
+							easyJSLine2 = "&&"
+						if (easyJSLine2.toLowerCase() == "or")
+							easyJSLine2 = "||"
+						easyJSLine += easyJSLine2 + " "
+					}
+					else {
+						easyJSLine += easyCodeStatements[easyJ] + " "
+					}
+					if (easyCodeStatements[easyJ].slice(-1)=='\"' && easyCodeStatements[easyJ].slice(-2)!='\\"'){
+						easyIgnore = false;
+					}
+				}
+				easyJSLine += "){"
+				easyJSCode += easyJSLine
+				break;
+			case "draw": //draws shapes to graph screen
+				var easyJSLine = ""
+				//draw rectangle at (350, 360) 5 by 6 color red
+				//draw circle at (350, 360) radius 5 color red
+				if (easyCodeStatements[1].toLowerCase() == "rectangle"){
+					easyJSLine += "drawRect"
+					if (easyCodeStatements.length==10){
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-7]
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-6]
+						easyJSLine = easyJSLine.slice(0, -1) + ", "
+					}
+					else{
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-6]
+						easyJSLine = easyJSLine.slice(0, -1) + ", "
+					}
+					easyJSLine += easyCodeStatements[easyCodeStatements.length-5]+", "+easyCodeStatements[easyCodeStatements.length-3]+", "
+					easyJSLine += "\"" + easyCodeStatements[easyCodeStatements.length-1] + "\")"
+				}
+				else if (easyCodeStatements[1].toLowerCase() == "circle"){
+					easyJSLine += "drawCirc"
+					if (easyCodeStatements.length==9){
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-6]
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-5]
+						easyJSLine = easyJSLine.slice(0, -1) + ", "
+					}
+					else{
+						easyJSLine += easyCodeStatements[easyCodeStatements.length-5]
+						easyJSLine = easyJSLine.slice(0, -1) + ", "
+					}
+					easyJSLine += easyCodeStatements[easyCodeStatements.length-3]+", "
+					easyJSLine += "\"" + easyCodeStatements[easyCodeStatements.length-1] + "\")"
+				}
+				easyJSCode += easyJSLine
+				break;
+			case "declare":
+			case "create": //declares a variable
+			//create x
+			//create x set to 10
+				if  (easyCodeStatements.length > 2){
+					var easyJSLine = "var " + easyCodeStatements[1] + " = "
+					for (easyJ = 4; easyJ < easyCodeStatements.length; easyJ++){
+						easyJSLine += easyCodeStatements[easyJ] + " "
+					}
+					easyJSCode += easyJSLine
+				}
+				else {
+					easyJSCode += "var " + easyCodeStatements[1]
+				}
+				break;
+		}
+		easyJSCode += "\n"
+	}
+	document.getElementById("easySource").value += "\n\n\n\n" + easyJSCode
+	easyJSCode = "\"use strict\";\n" + easyJSCode
+	easyProgramToRun = new Function ( easyJSCode )
+	try {easyProgramToRun() }
+	catch(easyErr) { display(easyErr, "red")}
+}
+
+function update(e){
+	key_pressed = String.fromCharCode(e.which);
+	/*dpad_up = false
+	dpad_down = false
+	dpad_right = false
+	dpad_left = false
+	quit_game = false
+	if (e.which==119){ dpad_up = true }
+	if (e.which==115){ dpad_down = true }
+	if (e.which==100){ dpad_right = true }
+	if (e.which==97){ dpad_left = true }
+	if (e.which==81){ quit_game = true }*/
+}
+
+function display(easyString, easyColor, easyBGColor){
+	if (easyBGColor != undefined){
+		document.getElementById("easyOutput").innerHTML += "<div style=\"color: " + easyColor + "; background-color: " + easyBGColor + ";\">" + easyString + "</div>"
+	}
+	else if (easyColor != undefined){
+		document.getElementById("easyOutput").innerHTML += "<div style=\"color: " + easyColor + "\">" + easyString + "</div>"
+	}
+	else {
+		document.getElementById("easyOutput").innerHTML += easyString + "<br/>" 
+	}
+	document.getElementById("easyOutput").scrollTop=document.getElementById("easyOutput").scrollHeight //go down
+}
+
+function clear(){
+	document.getElementById("easyOutput").innerHTML = ""
+}
+
+function ask(easyQuestion, easyVariable){	
+	var easyAnswer = window.prompt(easyQuestion)
+	eval(easyVariable + " = \"" + easyAnswer + "\"")
+
+}
+
+function drawRect(x, y, width, height, color){
+	y = 480 - y
+	height = 0 - height
+	easyCtx.fillStyle = color		
+	easyCtx.fillRect(x, y, width, height)
+}
+
+function drawCirc(x, y, radius, color){
+	y = 480 - y
+	easyCtx.beginPath();
+	easyCtx.fillStyle = color		
+	easyCtx.arc(x,y,radius,0,2*Math.PI)
+	easyCtx.closePath();
+	easyCtx.fill()
+}
+
+function switchTab(tabName){
+	document.getElementById("codeEditor").style.display = "none"
+	document.getElementById("easyOutput").style.display = "none"
+	document.getElementById("myCanvas").style.display = "none"
+	document.getElementById("helpViewer").style.display = "none"
+	document.getElementById(tabName).style.display = "inherit"
+	if (tabName=="myCanvas"){		
+		document.getElementById('myCanvas').focus();
+	}
+}
+</script></body></html>
