@@ -318,7 +318,11 @@ function run(){
 	}
 	document.getElementById("easySource").value += "\n\n\n\n" + easyJSCode
 	easyJSCode = "\"use strict\";\n" + easyJSCode
+	if (document.getElementById("myCanvas").style.display != "none"){ //focus on canvas if on graphics tab		
+		document.getElementById('myCanvas').focus();
+	}
 	easyProgramToRun = new Function ( easyJSCode )
+	
 	try {easyProgramToRun() }
 	catch(easyErr) { display(easyErr, "red")}
 }
