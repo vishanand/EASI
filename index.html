@@ -85,11 +85,6 @@ easyCtx.fillStyle = "black"
 easyCtx.fillRect(0,0,720,480)
 //keycode initialization
 key_pressed="";
-/*dpad_up = false
-dpad_down = false
-dpad_right = false
-dpad_left = false
-quit_game = false;*/
 switchTab("codeEditor")
 		
 function run(){
@@ -329,16 +324,6 @@ function run(){
 
 function update(e){
 	key_pressed = String.fromCharCode(e.which);
-	/*dpad_up = false
-	dpad_down = false
-	dpad_right = false
-	dpad_left = false
-	quit_game = false
-	if (e.which==119){ dpad_up = true }
-	if (e.which==115){ dpad_down = true }
-	if (e.which==100){ dpad_right = true }
-	if (e.which==97){ dpad_left = true }
-	if (e.which==81){ quit_game = true }*/
 }
 
 function display(easyString, easyColor, easyBGColor){
