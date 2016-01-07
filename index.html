@@ -8,7 +8,7 @@ editAreaLoader.init({
 	,replace_tab_by_spaces: 2
 });
 </script>
-</head><body>
+</head><body><style>#forkongithub a{background:#000;color:#fff;text-decoration:none;font-family:arial,sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:1rem;line-height:2rem;position:relative;transition:0.5s;}#forkongithub a:hover{background:#c11;color:#fff;}#forkongithub a::before,#forkongithub a::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}#forkongithub a::after{bottom:1px;top:auto;}@media screen and (min-width:800px){#forkongithub{position:absolute;display:block;top:0;right:0;width:200px;overflow:hidden;height:200px;z-index:9999;}#forkongithub a{width:200px;position:absolute;top:60px;right:-60px;transform:rotate(45deg);-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);-moz-transform:rotate(45deg);-o-transform:rotate(45deg);box-shadow:4px 4px 10px rgba(0,0,0,0.8);}}</style><span id="forkongithub"><a href="https://github.com/WeeshSquared/EASI">Fork me on GitHub</a></span>
 <h1>EASI Programming Language</h1>
 <p>Tabs: <button onclick='switchTab("codeEditor")'>Code Editor</button>
 <button onclick='switchTab("easyOutput")'>Console Output</button>
@@ -85,6 +85,11 @@ easyCtx.fillStyle = "black"
 easyCtx.fillRect(0,0,720,480)
 //keycode initialization
 key_pressed="";
+/*dpad_up = false
+dpad_down = false
+dpad_right = false
+dpad_left = false
+quit_game = false;*/
 switchTab("codeEditor")
 		
 function run(){
@@ -324,6 +329,16 @@ function run(){
 
 function update(e){
 	key_pressed = String.fromCharCode(e.which);
+	/*dpad_up = false
+	dpad_down = false
+	dpad_right = false
+	dpad_left = false
+	quit_game = false
+	if (e.which==119){ dpad_up = true }
+	if (e.which==115){ dpad_down = true }
+	if (e.which==100){ dpad_right = true }
+	if (e.which==97){ dpad_left = true }
+	if (e.which==81){ quit_game = true }*/
 }
 
 function display(easyString, easyColor, easyBGColor){
